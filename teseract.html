@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <script src='https://cdn.rawgit.com/naptha/tesseract.js/1.0.10/dist/tesseract.js'></script>
+    <title>Teseract OCR</title>
+</head>
+<body>
+  <span id="result"></span>
+</body>
+
+<script>
+    var img = new Image;
+    var canvas = document.createElement("canvas");
+    var ctx = canvas.getContext("2d");
+    var src = "images/mm_dl.jpg"; 
+
+    img.crossOrigin = "Anonymous";
+
+    img.onload = function() {
+        canvas.width = img.width;
+        canvas.height = img.height;
+        ctx.drawImage( img, 0, 0 );
+        
+    Tesseract.recognize(ctx)
+        .then(function(result){
+        document.getElementById("result")
+                        .innerText = result.text;
+        });
+    }
+    img.src = src;
+
+</script>
+</html>

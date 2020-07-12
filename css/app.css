@@ -108,7 +108,9 @@ body.step2 #step1, body.step2 #step3 {
 body.step3 #step1, body.step3 #step2 {
     display: none;
 }
-
+body #step2 button{
+    margin:10px;
+}
 .alert {
     display: none;
 }

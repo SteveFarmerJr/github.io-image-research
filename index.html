@@ -12,6 +12,7 @@
     <link rel="stylesheet" href="css/jquery.Jcrop.min.css"/>
     <link rel="stylesheet" href="css/app.css"/>
     <link href="https://netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.13.0/css/all.css" crossorigin="anonymous">
     
   
 
@@ -65,7 +66,19 @@
 
             <p>Contrast: <input type="range" min="0" max="100" id="contrast" value="90"></p>
 
-            <button class="btn btn-lg btn-success" id="adjust" disabled>Done</button>
+            <button type="button" id="hflipbutton" class="btn btn-primary" data-method="scaleX" data-option="-1" title="Flip Horizontal">
+            <span class="docs-tooltip" data-toggle="tooltip" title="" data-original-title="cropper.scaleX(-1)">
+              <span class="fa fa-arrows-alt-h"></span>
+            </span>
+          </button>
+          <button type="button" id="vflipbutton" class="btn btn-primary" data-method="scaleY" data-option="-1" title="Flip Vertical">
+            <span class="docs-tooltip" data-toggle="tooltip" title="" data-original-title="cropper.scaleY(-1)">
+              <span class="fa fa-arrows-alt-v"></span>
+            </span>
+          </button>
+          <div>
+              <button class="btn btn-lg btn-success" id="adjust" disabled>Done</button>
+          </div>
         </div>
         <!---------------------------------------------------------------STEP 3-------------------------------------------------------------->
         <div id="step3">

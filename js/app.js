@@ -213,7 +213,58 @@ function stopMediaTracks(stream) {
     //     }
     // }}
     
+//------------------------------------------------------------REFINEMENT-----------------------------------------------------------
+//---------------------------------------------------------------------------------------------------------------------------------
+let hflipbutton = document.getElementById('hflipbutton');
+let vflipbutton = document.getElementById('vflipbutton');
 
+function flipImage(image, ctx, flipH, flipV) {
+    let width = 640;
+    let height = 480;
+    var img = new Image();
+
+    var scaleH = flipH ? -1 : 1, // Set horizontal scale to -1 if flip horizontal
+        scaleV = flipV ? -1 : 1, // Set verical scale to -1 if flip vertical
+        posX = flipH ? width * -1 : 0, // Set x position to -100% if flip horizontal 
+        posY = flipV ? height * -1 : 0; // Set y position to -100% if flip vertical
+
+        ctx.save(); // Save the current state
+        ctx.scale(scaleH, scaleV); // Set scale to flip the image
+        ctx.drawImage(img, posX, posY, width, height); // draw the image
+        //ctx.restore(); // Restore the last saved state
+}
+
+function flipCap(img,flipH, flipV) {
+    var canvas = document.querySelector('#step2 canvas');
+    ctx = canvas.getContext('2d');
+    var img = $('step2 img');
+    flipImage(img, ctx, flipH, flipV);
+    return false;
+}
+
+//var img = document.querySelector('#step2 img');
+
+$(vflipbutton).click(function(){
+        flipCap(false,true);
+});  
+$(hflipbutton).click(function(){
+    var canvas = document.querySelector('#step2 canvas');
+    //canvas = fxCanvas;
+    var image = document.querySelector('#step2 img');
+    var width = image.width;
+    var ctx = canvas.getContext('2d');
+    ctx.translate(width,0);
+    ctx.scale(-1,1);
+    ctx.drawImage(image,0,0);
+    ctx.restore();
+    texture = fxCanvas.texture(canvas);
+    fxCanvas.draw(texture).update();
+    $('.jcrop-holder img').attr('src', fxCanvas.toDataURL());
+    //flipCap(true,false);
+});
+
+//------------------------------------------------------------PROCESS--------------------------------------------------------------
+//---------------------------------------------------------------------------------------------------------------------------------
 
     function step1() {
         checkRequirements()
@@ -312,9 +363,9 @@ function stopMediaTracks(stream) {
         });
     }
 
-    /*********************************
-     * UI Stuff
-     *********************************/
+//----------------------------------------------------------------------------------------------------------------------------------------
+//                                                                        UI/UX 
+//----------------------------------------------------------------------------------------------------------------------------------------     
 
     //start step1 immediately
     step1();

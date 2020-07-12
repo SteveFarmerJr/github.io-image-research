@@ -205,3 +205,8 @@ body #step2 button{
     /* This rule is very important, please don't ignore this */
     max-width: 100%;
   }
+
+  #fileimage{
+      width:640px;
+      height:480px;
+  }

@@ -1,5 +1,6 @@
 //const video = document.getElementById('video');
 const video = document.querySelector("#step1 video");
+const fileimage = document.querySelector("#step1 #fileImage");
 const button = document.getElementById('button');
 const select = document.getElementById('select');
 
@@ -69,7 +70,7 @@ function stopMediaTracks(stream) {
     var video = document.querySelector('video');
 
     var pictureWidth = 640;
-    var pictureHeight = 360;
+    var pictureHeight = 480;
 
     var fxCanvas = null;
     var texture = null;
@@ -181,24 +182,24 @@ function stopMediaTracks(stream) {
 
     //draw picture from video on canvas
     
-    $('#fileInput').on('change',function(){
-        var canvas = document.querySelector('#step2 canvas');
-        // var img = document.querySelector('#step2 img');
+    // $('#fileInput').on('change',function(){
+    //     var canvas = document.querySelector('#step2 canvas');
+    //     // var img = document.querySelector('#step2 img');
     
-        //setup canvas
-        canvas.width = pictureWidth;
-        canvas.height = pictureHeight;
+    //     //setup canvas
+    //     canvas.width = pictureWidth;
+    //     canvas.height = pictureHeight;
     
-        var ctx = canvas.getContext('2d');
+    //     var ctx = canvas.getContext('2d');
     
-        var reader = new FileReader();
-        reader.onload = function(evt){
-            var img = new Image();
-            img.onload = function(evt){
-            ctx.drawImage(img, 0, 0);                
-            }
-        }
-    });
+    //     var reader = new FileReader();
+    //     reader.onload = function(evt){
+    //         var img = new Image();
+    //         img.onload = function(evt){
+    //         ctx.drawImage(img, 0, 0);                
+    //         }
+    //     }
+    // });
     // $('#fileInput').on( 'change', function(){
     //     if (this.files && this.files[0]) {
     //       if ( this.files[0].type.match(/^image\//) ) {
@@ -214,8 +215,11 @@ function stopMediaTracks(stream) {
     // }}
 
     $('#fileInput').on('change',function(){
-        loadImage();
+        if (this.files && this.files[0]) {
+            loadImage();
+        }
     });
+
     function loadImage() {
         var input, file, fr, img;
 
@@ -237,24 +241,34 @@ function stopMediaTracks(stream) {
         else {
             file = input.files[0];
             fr = new FileReader();
-            fr.onload = createImage;
             fr.readAsDataURL(file);
+            console.log(file);
+            fr.onload = createImage;
         }
 
         function createImage() {
             img = new Image();
-            img.onload = imageLoaded;
             img.src = fr.result;
+            console.log(fr.result);
+            img.onload = imageLoaded;
         }
 
         function imageLoaded() {
             //var canvas = document.getElementById("canvas")
+            //let step2img = document.querySelector('#step2 img');
             canvas.width = img.width;
             canvas.height = img.height;
             //var ctx = canvas.getContext("2d");
-            ctx.drawImage(img,0,0);
+            //ctx.drawImage(img,0,0);
+            console.log('canvas contents below:');
             console.log(canvas.toDataURL("image/png"));
-            $('.jcrop-holder img').attr('src', canvas.toDataURL());
+            //$('.jcrop-holder img').attr('src', canvas.toDataURL());
+            //copy file to video tag?
+            $(fileimage).attr('src',img.src);
+            $(fileimage).width = pictureWidth;
+            $(fileimage).height = pictureHeight;
+            step2('file');
+            changeStep(2);
 
         }
 
@@ -431,7 +445,7 @@ canvas.addEventListener("mouseout", function(evt){
 });
 
 canvas.addEventListener("mousemove", function(evt){
-    console.log('mouse-down!');
+    console.log('mouse-move!');
     var image = document.querySelector('video');
     if (mouseDown) {
         translatePos.x = evt.clientX - startDragOffset.x;
@@ -458,18 +472,22 @@ canvas.addEventListener("mousemove", function(evt){
             });
     }
 
-    function step2() {
+    function step2(imagesource) {
         // var canvas = document.querySelector('#step2 canvas');
         var img = document.querySelector('#step2 img');
-
+        //let fileimage = document.querySelector("#uploadFile");
         //setup canvas
         canvas.width = pictureWidth;
         canvas.height = pictureHeight;
 
         //var ctx = canvas.getContext('2d');
-
+        if(imagesource == 'vid'){
+            ctx.drawImage(video, 0, 0);
+        }
+        else{
+            ctx.drawImage(fileimage,0,0);
+        }
         //draw picture from video on canvas
-        ctx.drawImage(video, 0, 0);
         ctx.save()
         //modify the picture using glfx.js filters
         texture = fxCanvas.texture(canvas);
@@ -583,7 +601,7 @@ canvas.addEventListener("mousemove", function(evt){
     });
 
     $('#takePicture').click(function () {
-        step2();
+        step2('vid');
         changeStep(2);
     });
 

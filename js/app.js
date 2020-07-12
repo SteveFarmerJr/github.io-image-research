@@ -212,57 +212,234 @@ function stopMediaTracks(stream) {
     //         }
     //     }
     // }}
+
+    $('#fileInput').on('change',function(){
+        loadImage();
+    });
+    function loadImage() {
+        var input, file, fr, img;
+
+        if (typeof window.FileReader !== 'function') {
+            write("The file API isn't supported on this browser yet.");
+            return;
+        }
+
+        input = document.getElementById('fileInput');
+        if (!input) {
+            write("Um, couldn't find the imgfile element.");
+        }
+        else if (!input.files) {
+            write("This browser doesn't seem to support the `files` property of file inputs.");
+        }
+        else if (!input.files[0]) {
+            write("Please select a file before clicking 'Load'");
+        }
+        else {
+            file = input.files[0];
+            fr = new FileReader();
+            fr.onload = createImage;
+            fr.readAsDataURL(file);
+        }
+
+        function createImage() {
+            img = new Image();
+            img.onload = imageLoaded;
+            img.src = fr.result;
+        }
+
+        function imageLoaded() {
+            //var canvas = document.getElementById("canvas")
+            canvas.width = img.width;
+            canvas.height = img.height;
+            //var ctx = canvas.getContext("2d");
+            ctx.drawImage(img,0,0);
+            console.log(canvas.toDataURL("image/png"));
+            $('.jcrop-holder img').attr('src', canvas.toDataURL());
+
+        }
+
+        function write(msg) {
+            var p = document.createElement('p');
+            p.innerHTML = msg;
+            document.body.appendChild(p);
+        }
+    }
     
-//------------------------------------------------------------REFINEMENT-----------------------------------------------------------
+//------------------------------------------------------------TRANSFORMS-----------------------------------------------------------
 //---------------------------------------------------------------------------------------------------------------------------------
 let hflipbutton = document.getElementById('hflipbutton');
 let vflipbutton = document.getElementById('vflipbutton');
+let canvas = document.querySelector('#step2 canvas');
+let image = document.querySelector('#step2 img');
+let ctx =  canvas.getContext('2d');
 
-function flipImage(image, ctx, flipH, flipV) {
-    let width = 640;
-    let height = 480;
-    var img = new Image();
+var translatePos = {
+    x: canvas.width / 2,
+    y: canvas.height / 2
+};
 
-    var scaleH = flipH ? -1 : 1, // Set horizontal scale to -1 if flip horizontal
-        scaleV = flipV ? -1 : 1, // Set verical scale to -1 if flip vertical
-        posX = flipH ? width * -1 : 0, // Set x position to -100% if flip horizontal 
-        posY = flipV ? height * -1 : 0; // Set y position to -100% if flip vertical
+var scale = 1.0;
+var scaleMultiplier = 0.8;
+var startDragOffset = {};
+var mouseDown = false;
 
-        ctx.save(); // Save the current state
-        ctx.scale(scaleH, scaleV); // Set scale to flip the image
-        ctx.drawImage(img, posX, posY, width, height); // draw the image
-        //ctx.restore(); // Restore the last saved state
-}
+// function flipImage(image, ctx, flipH, flipV) {
+//     let width = 640;
+//     let height = 480;
+//     var img = new Image();
 
-function flipCap(img,flipH, flipV) {
-    var canvas = document.querySelector('#step2 canvas');
-    ctx = canvas.getContext('2d');
-    var img = $('step2 img');
-    flipImage(img, ctx, flipH, flipV);
-    return false;
-}
+//     var scaleH = flipH ? -1 : 1, // Set horizontal scale to -1 if flip horizontal
+//         scaleV = flipV ? -1 : 1, // Set verical scale to -1 if flip vertical
+//         posX = flipH ? width * -1 : 0, // Set x position to -100% if flip horizontal 
+//         posY = flipV ? height * -1 : 0; // Set y position to -100% if flip vertical
+
+//         ctx.save(); // Save the current state
+//         ctx.scale(scaleH, scaleV); // Set scale to flip the image
+//         ctx.drawImage(img, posX, posY, width, height); // draw the image
+//         //ctx.restore(); // Restore the last saved state
+// }
+
+// function flipCap(img,flipH, flipV) {
+//     var canvas = document.querySelector('#step2 canvas');
+//     ctx = canvas.getContext('2d');
+//     var img = $('step2 img');
+//     flipImage(img, ctx, flipH, flipV);
+//     return false;
+// }
 
 //var img = document.querySelector('#step2 img');
 
 $(vflipbutton).click(function(){
-        flipCap(false,true);
-});  
-$(hflipbutton).click(function(){
-    var canvas = document.querySelector('#step2 canvas');
-    //canvas = fxCanvas;
-    var image = document.querySelector('#step2 img');
-    var width = image.width;
-    var ctx = canvas.getContext('2d');
-    ctx.translate(width,0);
-    ctx.scale(-1,1);
-    ctx.drawImage(image,0,0);
     ctx.restore();
+    vflip();
+    // var canvas = document.querySelector('#step2 canvas');
+    // var ctx = canvas.getContext('2d');
+    // ctx.restore(); // restore image from original in step 2 (take a pic)
+    // var image = document.querySelector('#step2 img');
+    // var height = image.height;
+    // ctx.translate(0,height);
+    // ctx.scale(1,-1);
+    // ctx.drawImage(image,0,0);  //pull image back from video 
+    // texture = fxCanvas.texture(canvas);
+    // fxCanvas.draw(texture).update();
+    // $('.jcrop-holder img').attr('src', fxCanvas.toDataURL());
+});  
+function vflip(){
+    ctx.restore(); // restore image from original in step 2 (take a pic)
+    var image = document.querySelector('#step2 img');
+    var height = image.height;
+    ctx.translate(0,height);
+    ctx.scale(1,-1);
+    ctx.drawImage(image,0,0);  //pull image back from video 
     texture = fxCanvas.texture(canvas);
     fxCanvas.draw(texture).update();
-    $('.jcrop-holder img').attr('src', fxCanvas.toDataURL());
+    $('.jcrop-holder img').attr('src', fxCanvas.toDataURL());   
+}
+$(hflipbutton).click(function(){
+    ctx.restore();
+    hflip();
+    // var canvas = document.querySelector('#step2 canvas');
+    // var ctx = canvas.getContext('2d');
+    // ctx.restore(); // restore image from original in step 2 (take a pic)
+    // var image = document.querySelector('#step2 img');
+    // var width = image.width;
+    // ctx.translate(width,0);
+    // ctx.scale(-1,1);
+    // ctx.drawImage(image,0,0); 
+    // texture = fxCanvas.texture(canvas);
+    // fxCanvas.draw(texture).update();
+    // $('.jcrop-holder img').attr('src', fxCanvas.toDataURL());
     //flipCap(true,false);
 });
 
+function hflip(){
+    ctx.restore(); // restore image from original in step 2 (take a pic)
+    var image = document.querySelector('#step2 img');
+    var width = image.width;
+    ctx.translate(width,0);
+    ctx.scale(-1,1);
+    ctx.drawImage(image,0,0); 
+    texture = fxCanvas.texture(canvas);
+    fxCanvas.draw(texture).update();
+    $('.jcrop-holder img').attr('src', fxCanvas.toDataURL());
+ 
+}
+
+$(zoominbutton).click(function(){
+    zoomin();
+});
+
+$(zoomoutbutton).click(function(){
+    zoomout();
+});
+
+function zoomin(){
+    // var canvas = document.querySelector('#step2 canvas');
+    // var image = document.querySelector('#step2 img');
+    // var ctx = canvas.getContext('2d');
+    var width = image.width, height = image.height;
+    scale /= scaleMultiplier;
+    // ctx.translate(width * scale,height*scale);
+    ctx.drawImage(image, 0, 0, width * scale, height * scale); // draw the image
+    //ctx.restore();
+    texture = fxCanvas.texture(canvas);
+    fxCanvas.draw(texture).update();
+    $('.jcrop-holder img').attr('src', fxCanvas.toDataURL());
+  
+}
+
+function zoomout(){
+    // var canvas = document.querySelector('#step2 canvas');
+    // var image = document.querySelector('#step2 img');
+    // var ctx = canvas.getContext('2d');
+    var width = image.width, height = image.height;
+    scale *= scaleMultiplier;
+    // ctx.translate(width * scale,height*scale);
+    ctx.drawImage(image, 0, 0, width * scale, height * scale); // draw the image
+    //ctx.restore();
+    texture = fxCanvas.texture(canvas);
+    fxCanvas.draw(texture).update();
+    $('.jcrop-holder img').attr('src', fxCanvas.toDataURL());
+  
+}
+
+
+//(((((((((((((((((((((((((((((((((((((((((((((((TRYING TO PAN HERE)))))))))))))))))))))))))))))))))))))))))))))))
+canvas.addEventListener("mousedown", function(evt){
+    mouseDown = true;
+    console.log('mouse-down!');
+    startDragOffset.x = evt.clientX - translatePos.x;
+    startDragOffset.y = evt.clientY - translatePos.y;
+});
+
+canvas.addEventListener("mouseup", function(evt){
+    mouseDown = false;
+    console.log('mouse-up!');
+
+});
+
+canvas.addEventListener("mouseover", function(evt){
+    mouseDown = false;
+    console.log('mouse-over');
+
+});
+
+canvas.addEventListener("mouseout", function(evt){
+    mouseDown = false;
+    console.log('mouse-out');
+
+});
+
+canvas.addEventListener("mousemove", function(evt){
+    console.log('mouse-down!');
+    var image = document.querySelector('video');
+    if (mouseDown) {
+        translatePos.x = evt.clientX - startDragOffset.x;
+        translatePos.y = evt.clientY - startDragOffset.y;
+        ctx.drawImage(image,scale, translatePos);
+    }
+});
+ ctx.drawImage(image,translatePos.x,translatePos.y,1,1);
 //------------------------------------------------------------PROCESS--------------------------------------------------------------
 //---------------------------------------------------------------------------------------------------------------------------------
 
@@ -282,18 +459,18 @@ $(hflipbutton).click(function(){
     }
 
     function step2() {
-        var canvas = document.querySelector('#step2 canvas');
+        // var canvas = document.querySelector('#step2 canvas');
         var img = document.querySelector('#step2 img');
 
         //setup canvas
         canvas.width = pictureWidth;
         canvas.height = pictureHeight;
 
-        var ctx = canvas.getContext('2d');
+        //var ctx = canvas.getContext('2d');
 
         //draw picture from video on canvas
         ctx.drawImage(video, 0, 0);
-
+        ctx.save()
         //modify the picture using glfx.js filters
         texture = fxCanvas.texture(canvas);
         fxCanvas.draw(texture)

@@ -254,17 +254,22 @@ function stopMediaTracks(stream) {
         }
 
         function imageLoaded() {
-            //var canvas = document.getElementById("canvas")
-            //let step2img = document.querySelector('#step2 img');
             canvas.width = img.width;
             canvas.height = img.height;
-            //var ctx = canvas.getContext("2d");
-            //ctx.drawImage(img,0,0);
             console.log('canvas contents below:');
             console.log(canvas.toDataURL("image/png"));
-            //$('.jcrop-holder img').attr('src', canvas.toDataURL());
-            //copy file to video tag?
-            $(fileimage).attr('src',img.src);
+            //scale incoming image
+            //ctx.scale(640/img.width,480/img.height);
+            ctx.drawImage(img,0,0,640,480);
+            var dataurl = canvas.toDataURL();
+            console.log(dataurl);
+            //var rasterizedImage = dataURLToBlob(dataurl);
+            //fr.readAsDataURL(dataurl);
+            let rszImage = new Image();
+            rszImage.src = dataurl;
+            $(fileimage).attr('src',rszImage.src);
+            //$(fileimage).attr('src',img.src);  //<--shows fullimage huge!!
+
             $(fileimage).width = pictureWidth;
             $(fileimage).height = pictureHeight;
             step2('file');

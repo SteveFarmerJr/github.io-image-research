@@ -13,7 +13,7 @@ function stopMediaTracks(stream) {
       track.stop();
     });
   }
-  
+
   function gotDevices(mediaDevices) {
     select.innerHTML = '';
     select.appendChild(document.createElement('option'));
@@ -29,7 +29,7 @@ function stopMediaTracks(stream) {
       }
     });
   }
-  
+
   button.addEventListener('click', event => {
     if (typeof currentStream !== 'undefined') {
       stopMediaTracks(currentStream);
@@ -56,10 +56,10 @@ function stopMediaTracks(stream) {
         console.error(error);
       });
   });
-  
+
   //call to enumerate
   navigator.mediaDevices.enumerateDevices().then(gotDevices);
-  
+
 
 
 //------------------Aquisition ---------------------------------------------
@@ -181,22 +181,22 @@ function stopMediaTracks(stream) {
 
 
     //draw picture from video on canvas
-    
+
     // $('#fileInput').on('change',function(){
     //     var canvas = document.querySelector('#step2 canvas');
     //     // var img = document.querySelector('#step2 img');
-    
+
     //     //setup canvas
     //     canvas.width = pictureWidth;
     //     canvas.height = pictureHeight;
-    
+
     //     var ctx = canvas.getContext('2d');
-    
+
     //     var reader = new FileReader();
     //     reader.onload = function(evt){
     //         var img = new Image();
     //         img.onload = function(evt){
-    //         ctx.drawImage(img, 0, 0);                
+    //         ctx.drawImage(img, 0, 0);
     //         }
     //     }
     // });
@@ -209,7 +209,7 @@ function stopMediaTracks(stream) {
     //            img.onload = function() {
     //              context.canvas.height = img.height;
     //              context.canvas.width  = img.width;
-    //              context.drawImage(img, 0, 0);                                
+    //              context.drawImage(img, 0, 0);
     //         }
     //     }
     // }}
@@ -254,8 +254,8 @@ function stopMediaTracks(stream) {
         }
 
         function imageLoaded() {
-            canvas.width = img.width;
-            canvas.height = img.height;
+            canvas.width = pictureWidth;//img.width;
+            canvas.height = pictureHeight;//img.height;
             console.log('canvas contents below:');
             console.log(canvas.toDataURL("image/png"));
             //scale incoming image
@@ -283,7 +283,7 @@ function stopMediaTracks(stream) {
             document.body.appendChild(p);
         }
     }
-    
+
 //------------------------------------------------------------TRANSFORMS-----------------------------------------------------------
 //---------------------------------------------------------------------------------------------------------------------------------
 let hflipbutton = document.getElementById('hflipbutton');
@@ -309,7 +309,7 @@ var mouseDown = false;
 
 //     var scaleH = flipH ? -1 : 1, // Set horizontal scale to -1 if flip horizontal
 //         scaleV = flipV ? -1 : 1, // Set verical scale to -1 if flip vertical
-//         posX = flipH ? width * -1 : 0, // Set x position to -100% if flip horizontal 
+//         posX = flipH ? width * -1 : 0, // Set x position to -100% if flip horizontal
 //         posY = flipV ? height * -1 : 0; // Set y position to -100% if flip vertical
 
 //         ctx.save(); // Save the current state
@@ -338,21 +338,21 @@ $(vflipbutton).click(function(){
     // var height = image.height;
     // ctx.translate(0,height);
     // ctx.scale(1,-1);
-    // ctx.drawImage(image,0,0);  //pull image back from video 
+    // ctx.drawImage(image,0,0);  //pull image back from video
     // texture = fxCanvas.texture(canvas);
     // fxCanvas.draw(texture).update();
     // $('.jcrop-holder img').attr('src', fxCanvas.toDataURL());
-});  
+});
 function vflip(){
     ctx.restore(); // restore image from original in step 2 (take a pic)
     var image = document.querySelector('#step2 img');
     var height = image.height;
     ctx.translate(0,height);
     ctx.scale(1,-1);
-    ctx.drawImage(image,0,0);  //pull image back from video 
+    ctx.drawImage(image,0,0);  //pull image back from video
     texture = fxCanvas.texture(canvas);
     fxCanvas.draw(texture).update();
-    $('.jcrop-holder img').attr('src', fxCanvas.toDataURL());   
+    $('.jcrop-holder img').attr('src', fxCanvas.toDataURL());
 }
 $(hflipbutton).click(function(){
     ctx.restore();
@@ -364,7 +364,7 @@ $(hflipbutton).click(function(){
     // var width = image.width;
     // ctx.translate(width,0);
     // ctx.scale(-1,1);
-    // ctx.drawImage(image,0,0); 
+    // ctx.drawImage(image,0,0);
     // texture = fxCanvas.texture(canvas);
     // fxCanvas.draw(texture).update();
     // $('.jcrop-holder img').attr('src', fxCanvas.toDataURL());
@@ -377,11 +377,11 @@ function hflip(){
     var width = image.width;
     ctx.translate(width,0);
     ctx.scale(-1,1);
-    ctx.drawImage(image,0,0); 
+    ctx.drawImage(image,0,0);
     texture = fxCanvas.texture(canvas);
     fxCanvas.draw(texture).update();
     $('.jcrop-holder img').attr('src', fxCanvas.toDataURL());
- 
+
 }
 
 $(zoominbutton).click(function(){
@@ -404,7 +404,7 @@ function zoomin(){
     texture = fxCanvas.texture(canvas);
     fxCanvas.draw(texture).update();
     $('.jcrop-holder img').attr('src', fxCanvas.toDataURL());
-  
+
 }
 
 function zoomout(){
@@ -419,7 +419,7 @@ function zoomout(){
     texture = fxCanvas.texture(canvas);
     fxCanvas.draw(texture).update();
     $('.jcrop-holder img').attr('src', fxCanvas.toDataURL());
-  
+
 }
 
 
@@ -488,12 +488,8 @@ canvas.addEventListener("mousemove", function(evt){
         //var ctx = canvas.getContext('2d');
         if(imagesource == 'vid'){
             ctx.drawImage(video, 0, 0);
-        }
-        else{
-            ctx.drawImage(fileimage,0,0);
-        }
         //draw picture from video on canvas
-        ctx.save()
+        //ctx.save()
         //modify the picture using glfx.js filters
         texture = fxCanvas.texture(canvas);
         fxCanvas.draw(texture)
@@ -501,6 +497,28 @@ canvas.addEventListener("mousemove", function(evt){
             .unsharpMask(20, 2)
             .brightnessContrast(0.2, 0.9)
             .update();
+        }
+        else{
+            var tempimg = new Image();
+            tempimg.src = fileimage.src;
+            tempimg.addEventListener("load",draw,false);
+             function draw(){
+                // ctx.drawImage(tempimg,0,0,640,480);
+                // $(img).attr('src',tempimg.src); //this works - for some reason our
+                texture = fxCanvas.texture(tempimg);
+                fxCanvas.draw(texture).update();
+            };
+            // image is not getting written to the canvas
+        }
+        //draw picture from video on canvas
+        //ctx.save()
+        //modify the picture using glfx.js filters
+        //texture = fxCanvas.texture(tempimg);
+        //fxCanvas.draw(texture)
+            // .hueSaturation(-1, -1)//grayscale
+            // .unsharpMask(20, 2)
+            // .brightnessContrast(0.2, 0.9)
+            // .update();
 
         window.texture = texture;
         window.fxCanvas = fxCanvas;
@@ -517,11 +535,14 @@ canvas.addEventListener("mousemove", function(evt){
                     });
                 } else {
                     //update crop tool (it creates copies of <img> that we have to update manually)
-                    $('.jcrop-holder img').attr('src', fxCanvas.toDataURL());
+                     $('.jcrop-holder img').attr('src', fxCanvas.toDataURL());
+                    //$('.jcrop-holder img').attr('src', canvas.toDataURL());
                 }
             })
             //show output from glfx.js
             .attr('src', fxCanvas.toDataURL());
+            //.attr('src', canvas.toDataURL());
+        // $(img).Jcrop(); //this works - something is going on with the fxCanvas?
     }
 
     function step3() {
@@ -564,8 +585,8 @@ canvas.addEventListener("mousemove", function(evt){
     }
 
 //----------------------------------------------------------------------------------------------------------------------------------------
-//                                                                        UI/UX 
-//----------------------------------------------------------------------------------------------------------------------------------------     
+//                                                                        UI/UX
+//----------------------------------------------------------------------------------------------------------------------------------------
 
     //start step1 immediately
     step1();
@@ -599,9 +620,9 @@ canvas.addEventListener("mousemove", function(evt){
             .brightnessContrast(brightness, contrast)
             .update();
 
-        img.src = fxCanvas.toDataURL();
+        img.src = fxCanvas.toDataURL(); //pull the altered image off the fxCanvas
 
-        //update crop tool (it creates copies of <img> that we have to update manually)
+        //update crop tool (it creates copies of <img> that we have to update manually) copy canvas to crop holder
         $('.jcrop-holder img').attr('src', fxCanvas.toDataURL());
     });
 

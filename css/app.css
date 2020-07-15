@@ -209,4 +209,10 @@ body #step2 button{
   #fileimage{
       width:640px;
       height:480px;
+      /* display:none; */
+  }
+
+  #step2 img{
+      width:640px !important;
+      height: 480px !important
   }

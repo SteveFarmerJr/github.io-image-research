@@ -505,8 +505,13 @@ canvas.addEventListener("mousemove", function(evt){
              function draw(){
                 // ctx.drawImage(tempimg,0,0,640,480);
                 // $(img).attr('src',tempimg.src); //this works - for some reason our
-                texture = fxCanvas.texture(tempimg);
-                fxCanvas.draw(texture).update();
+                texture = fxCanvas.texture(fileimage);
+                fxCanvas.draw(texture)
+                .hueSaturation(-1, -1)//grayscale
+                .unsharpMask(20, 2)
+                .brightnessContrast(0.2, 0.9)
+                .update()
+                .update();
             };
             // image is not getting written to the canvas
         }
@@ -514,11 +519,11 @@ canvas.addEventListener("mousemove", function(evt){
         //ctx.save()
         //modify the picture using glfx.js filters
         //texture = fxCanvas.texture(tempimg);
-        //fxCanvas.draw(texture)
-            // .hueSaturation(-1, -1)//grayscale
-            // .unsharpMask(20, 2)
-            // .brightnessContrast(0.2, 0.9)
-            // .update();
+        // fxCanvas.draw(canvas)
+        //     .hueSaturation(-1, -1)//grayscale
+        //     .unsharpMask(20, 2)
+        //     .brightnessContrast(0.2, 0.9)
+        //     .update();
 
         window.texture = texture;
         window.fxCanvas = fxCanvas;
@@ -593,6 +598,7 @@ canvas.addEventListener("mousemove", function(evt){
     $('.help').popover();
 
     function changeStep(step) {
+        $('#fileImage').hide();
         if (step === 1) {
             video.play();
         } else {
